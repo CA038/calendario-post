@@ -1,0 +1,212 @@
+/* ==========================================================
+   VISTA DE CALENDARIO MENSUAL / SEMANAL
+   ========================================================== */
+
+.calendar-wrapper {
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Cabecera del Calendario y Controles de Mes */
+.calendar-controls-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.calendar-current-month {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-primary);
+    text-transform: capitalize;
+}
+
+.calendar-nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.calendar-nav-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: #f8fafc;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: var(--transition-fast);
+}
+
+.calendar-nav-btn:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.btn-today {
+    padding: 8px 16px;
+    background: #f1f5f9;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    transition: var(--transition-fast);
+}
+
+.btn-today:hover {
+    background: #e2e8f0;
+}
+
+/* Días de la Semana (Lunes a Domingo) */
+.calendar-weekdays-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    text-align: center;
+}
+
+.weekday-header-cell {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 0;
+}
+
+/* Cuadrícula de Días */
+.calendar-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    min-height: 560px;
+}
+
+.calendar-day-cell {
+    background: #f8fafc;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: var(--transition-fast);
+    position: relative;
+}
+
+.calendar-day-cell:hover {
+    border-color: var(--border-focus);
+    background: #ffffff;
+    box-shadow: var(--shadow-sm);
+}
+
+.calendar-day-cell.other-month {
+    opacity: 0.35;
+    background: #f1f5f9;
+}
+
+.calendar-day-cell.today {
+    border-color: var(--accent);
+    background: #eff6ff;
+}
+
+.day-cell-number {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+}
+
+.calendar-day-cell.today .day-cell-number {
+    background: var(--accent);
+    color: #ffffff;
+}
+
+/* Tarjeta Mini de Post dentro del Calendario */
+.calendar-post-chip {
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 6px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: transform var(--transition-fast);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.calendar-post-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    border-color: var(--accent);
+}
+
+.calendar-post-chip.status-pending {
+    border-left: 3px solid var(--status-pending-badge);
+}
+
+.calendar-post-chip.status-approved {
+    border-left: 3px solid var(--status-approved-badge);
+}
+
+.calendar-post-chip.status-rejected {
+    border-left: 3px solid var(--status-rejected-badge);
+}
+
+.chip-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.btn-calendar-chip-delete {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    flex-shrink: 0;
+    opacity: 0.5;
+}
+
+.calendar-post-chip:hover .btn-calendar-chip-delete {
+    opacity: 1;
+}
+
+.btn-calendar-chip-delete:hover {
+    background: #fee2e2;
+    color: #ef4444;
+    transform: scale(1.15);
+}

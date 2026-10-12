@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialFlow &bull; Calendario de Contenidos y Aprobación de Posts</title>
+    <meta name="description" content="Sistema de calendario de posteo y aprobación de reels y publicaciones para clientes de agencias de marketing.">
+    
+    <!-- Tipografía Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Hojas de Estilo CSS Modulares -->
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/calendar.css">
+    <link rel="stylesheet" href="assets/css/modal.css">
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- ====================================================
+             BARRA DE MENÚ LATERAL (SIDEBAR)
+             ==================================================== -->
+        <aside class="sidebar">
+            
+            <!-- Logo de la Plataforma y Botón de Colapso -->
+            <div class="sidebar-header">
+                <div class="sidebar-header-left">
+                    <div class="brand-logo-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                    </div>
+                    <div class="brand-info">
+                        <h2>SocialFlow</h2>
+                        <span>Portal de Aprobación</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-toggle-sidebar" id="btn-toggle-sidebar" title="Colapsar / Expandir menú lateral">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Selector de Cliente Activo Mejorado (Clicable en toda la tarjeta) -->
+            <div class="client-switch-wrapper" id="client-switch-wrapper" title="Haz clic para cambiar de cliente o crear uno nuevo">
+                <div class="client-switch-label">
+                    <span>Cliente Activo</span>
+                    <span class="client-switch-badge-tag">Marca</span>
+                </div>
+                <div class="client-switch-selector">
+                    <div class="client-avatar-badge" id="sidebar-client-avatar">LD</div>
+                    <div class="client-select-info">
+                        <span class="client-name-display" id="sidebar-client-name">Lumina Dental</span>
+                        <small class="client-desc-display" id="sidebar-client-desc">Clínica de estética dental</small>
+                    </div>
+                    <div class="select-chevron-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Menú Desplegable Flotante de Clientes -->
+                <div class="client-dropdown-menu" id="client-dropdown-menu">
+                    <div class="client-dropdown-list" id="client-dropdown-list"></div>
+                    <div class="client-dropdown-footer">
+                        <button type="button" class="btn-add-new-client" id="btn-add-new-client">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            <span>+ Agregar Nuevo Cliente</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón Rápido para Compartir Link del Cliente Activo en Sidebar -->
+            <div class="sidebar-client-share-wrap admin-only-feature">
+                <button type="button" class="btn-sidebar-quick-share" onclick="window.uiRenderer.copyActiveClientLink()" title="Copiar enlace de aprobación del cliente activo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" style="width: 14px; height: 14px;">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    <span>Compartir con Cliente</span>
+                    <span class="quick-copy-tag">Copiar</span>
+                </button>
+            </div>
+
+            <!-- Navegación Principal -->
+            <nav class="sidebar-nav">
+                <span class="nav-section-title">Vistas</span>
+                <a href="#feed" class="nav-item active" data-view="feed">
+                    <div class="nav-item-left">
+                        <span class="nav-item-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                        </span>
+                        <span>Feed de Contenidos</span>
+                    </div>
+                    <span class="nav-badge" id="badge-count-all">0</span>
+                </a>
+
+                <a href="#calendar" class="nav-item" data-view="calendar">
+                    <div class="nav-item-left">
+                        <span class="nav-item-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </span>
+                        <span>Calendario Mensual</span>
+                    </div>
+                </a>
+
+                <a href="#clients" class="nav-item admin-only-feature" data-view="clients">
+                    <div class="nav-item-left">
+                        <span class="nav-item-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                            </svg>
+                        </span>
+                        <span>Gestión de Clientes</span>
+                    </div>
+                    <span class="nav-badge" id="badge-count-clients">0</span>
+                </a>
+
+                <a href="#users" class="nav-item admin-only-feature" data-view="users">
+                    <div class="nav-item-left">
+                        <span class="nav-item-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </span>
+                        <span>Usuarios y Accesos</span>
+                    </div>
+                    <span class="nav-badge" id="badge-count-users">0</span>
+                </a>
+
+                <!-- Sección de Estados de Aprobación (Solo Visible en Modo Agencia) -->
+                <div class="admin-only-feature" style="display: flex; flex-direction: column; gap: 5px;">
+                    <span class="nav-section-title">Estados de Aprobación</span>
+                    <a href="#pending" class="nav-item" data-view="feed" data-status="pending_approval">
+                        <div class="nav-item-left">
+                            <span class="nav-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </span>
+                            <span>Pendientes</span>
+                        </div>
+                        <span class="nav-badge pending" id="badge-count-pending">0</span>
+                    </a>
+
+                    <a href="#approved" class="nav-item" data-view="feed" data-status="approved">
+                        <div class="nav-item-left">
+                            <span class="nav-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            </span>
+                            <span>Aprobados</span>
+                        </div>
+                        <span class="nav-badge approved" id="badge-count-approved">0</span>
+                    </a>
+
+                    <a href="#changes" class="nav-item" data-view="feed" data-status="changes_requested">
+                        <div class="nav-item-left">
+                            <span class="nav-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                </svg>
+                            </span>
+                            <span>Con Observaciones</span>
+                        </div>
+                        <span class="nav-badge rejected" id="badge-count-changes">0</span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Acciones Rápidas en Footer de Sidebar (Solo Agencia) -->
+            <div class="sidebar-footer admin-only-feature">
+                <button id="btn-open-new-post-modal" class="btn-new-post" style="width: 100%;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>Crear Nuevo Post</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ====================================================
+             ÁREA DE CONTENIDO PRINCIPAL
+             ==================================================== -->
+        <main class="main-content">
+            
+            <!-- Cabecera Superior -->
+            <header class="top-header">
+                <div class="header-left">
+                    <div class="search-bar-container">
+                        <span class="search-bar-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </span>
+                        <input type="text" id="main-search-input" class="search-bar-input" placeholder="Buscar por título, copy o hashtag...">
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <!-- Botón Destacado: Compartir Calendario del Cliente Activo -->
+                    <button type="button" class="btn-topbar-share-portal admin-only-feature" id="btn-topbar-share-portal" onclick="window.uiRenderer.copyActiveClientLink()" title="Copiar enlace del portal de aprobación para enviar a tu cliente">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="width: 15px; height: 15px;">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                        </svg>
+                        <span>🔗 Compartir con Cliente</span>
+                    </button>
+
+                    <!-- Badge de Estado de Supabase Cloud -->
+                    <div id="supabase-cloud-badge" class="cloud-status-badge" title="Estado de la conexión con Supabase">
+                        <span class="cloud-dot"></span>
+                        <span class="cloud-text" id="supabase-status-text">Supabase</span>
+                    </div>
+
+                    <!-- Widget de Usuario Activo en Sesión -->
+                    <div id="header-active-user-badge"></div>
+
+                    <!-- Selector de Modo: Agencia vs Cliente -->
+                    <div class="role-mode-pill">
+                        <button class="role-btn active" data-role="admin">Modo Agencia</button>
+                        <button class="role-btn" data-role="client">Vista Cliente</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Cuerpo de la Página -->
+            <div class="page-body">
+                
+                <!-- Sección Hero y Métricas -->
+                <section class="client-hero-section">
+                    <div class="hero-text-content">
+                        <div class="hero-tags-wrapper">
+                            <span class="hero-subtitle-tag" id="hero-client-tag-text">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+                                    <path d="M12 2l2.4 7.2 7.6 2.4-7.6 2.4L12 21.2l-2.4-7.2-7.6-2.4 7.6-2.4L12 2z"></path>
+                                </svg>
+                                <span>Aprobación de Contenidos</span>
+                            </span>
+
+                            <!-- Botón Prominente para Compartir Calendario del Cliente Activo -->
+                            <button type="button" class="btn-hero-share-link admin-only-feature" id="btn-hero-share-client-link" onclick="window.uiRenderer.copyActiveClientLink()" title="Copiar enlace exclusivo del portal para este cliente">
+                                <span class="share-icon-circle">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;">
+                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                    </svg>
+                                </span>
+                                <span class="btn-hero-share-text">🔗 Enviar Calendario al Cliente</span>
+                                <span class="btn-hero-share-pill">Copiar Link</span>
+                            </button>
+                        </div>
+                        
+                        <h1 class="hero-title" id="hero-client-title">Calendario de Contenidos</h1>
+                        <p class="hero-description" id="hero-client-desc">
+                            Revisa los diseños y videos reels programados para tu marca. Haz clic en cualquier publicación para ver el video, leer el copy y aprobar o solicitar cambios.
+                        </p>
+                    </div>
+
+                    <div class="hero-stats-row">
+                        <div class="stat-card-pill">
+                            <span class="stat-number" id="stat-total-posts">0</span>
+                            <span class="stat-label">Total Posts</span>
+                        </div>
+                        <div class="stat-card-pill pending">
+                            <span class="stat-number" id="stat-pending-posts">0</span>
+                            <span class="stat-label">Por Aprobar</span>
+                        </div>
+                        <div class="stat-card-pill approved">
+                            <span class="stat-number" id="stat-approved-posts">0</span>
+                            <span class="stat-label">Aprobados</span>
+                        </div>
+                        <div class="stat-card-pill">
+                            <span class="stat-number" id="stat-reels-count">0</span>
+                            <span class="stat-label">Reels</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Filtros Horizontales por Categoría (Estilo Referencia) -->
+                <section id="category-filters-container" class="filter-categories-bar"></section>
+
+                <!-- Vista de Cuadrícula (Feed Grid) -->
+                <section id="posts-grid-container" class="posts-grid-container"></section>
+
+                <!-- Vista de Calendario Mensual -->
+                <section id="calendar-view-container" class="calendar-wrapper" style="display: none;">
+                    <div class="calendar-controls-header">
+                        <h2 class="calendar-current-month" id="calendar-month-label">Octubre 2026</h2>
+                        <div class="calendar-nav-buttons">
+                            <button id="btn-calendar-prev" class="calendar-nav-btn" title="Mes anterior">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                </svg>
+                            </button>
+                            <button id="btn-calendar-today" class="btn-today">Hoy</button>
+                            <button id="btn-calendar-next" class="calendar-nav-btn" title="Mes siguiente">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="calendar-weekdays-grid">
+                        <div class="weekday-header-cell">Lun</div>
+                        <div class="weekday-header-cell">Mar</div>
+                        <div class="weekday-header-cell">Mié</div>
+                        <div class="weekday-header-cell">Jue</div>
+                        <div class="weekday-header-cell">Vie</div>
+                        <div class="weekday-header-cell">Sáb</div>
+                        <div class="weekday-header-cell">Dom</div>
+                    </div>
+
+                    <div id="calendar-days-grid" class="calendar-days-grid"></div>
+                </section>
+
+                <!-- Vista de Gestión de Usuarios y Accesos (2 Categorías: Modo Agencia vs Vista Cliente) -->
+                <section id="users-view-container" class="users-view-section" style="display: none;">
+                    <div class="users-header-bar">
+                        <div class="users-categories-nav" id="user-category-pills"></div>
+                        <button type="button" class="btn-new-user" onclick="window.userManager.openCreateUserModal()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px;">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            <span>+ Registrar Usuario</span>
+                        </button>
+                    </div>
+
+                    <!-- Resumen de Métricas de Usuarios -->
+                    <div class="users-stats-overview">
+                        <div class="user-stat-card" onclick="window.userManager.setCategoryFilter('agency')">
+                            <div class="user-stat-icon agency">🏢</div>
+                            <div class="user-stat-info">
+                                <span class="user-stat-number" id="stat-users-agency">0</span>
+                                <span class="user-stat-label">Modo Agencia (Staff)</span>
+                            </div>
+                        </div>
+                        <div class="user-stat-card" onclick="window.userManager.setCategoryFilter('client')">
+                            <div class="user-stat-icon client">👤</div>
+                            <div class="user-stat-info">
+                                <span class="user-stat-number" id="stat-users-client">0</span>
+                                <span class="user-stat-label">Vista Cliente (Aprobadores)</span>
+                            </div>
+                        </div>
+                        <div class="user-stat-card" onclick="window.userManager.setCategoryFilter('all')">
+                            <div class="user-stat-icon total">👥</div>
+                            <div class="user-stat-info">
+                                <span class="user-stat-number" id="stat-users-total">0</span>
+                                <span class="user-stat-label">Total Usuarios</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grid de Tarjetas de Usuarios -->
+                    <div id="users-grid-container" class="users-grid-container"></div>
+                </section>
+
+                <!-- Vista de Gestión de Clientes y Prospectos (Sectorización y CRUD Completo) -->
+                <section id="clients-view-container" class="clients-view-section" style="display: none;">
+                    <div class="clients-header-bar">
+                        <div class="clients-categories-nav" id="client-category-pills"></div>
+                        
+                        <div class="clients-header-right-actions">
+                            <!-- Toggle entre Modo Fichas y Modo Lista -->
+                            <div class="view-mode-toggle-group">
+                                <button type="button" class="btn-view-toggle active" id="btn-client-view-grid" onclick="window.clientManager.setViewMode('grid')" title="Vista en Fichas / Tarjetas">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                                    <span>Fichas</span>
+                                </button>
+                                <button type="button" class="btn-view-toggle" id="btn-client-view-list" onclick="window.clientManager.setViewMode('list')" title="Vista en Lista / Tabla">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                                    <span>Lista</span>
+                                </button>
+                            </div>
+
+                            <button type="button" class="btn-new-client-main" onclick="window.clientManager.openCreateModal()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px;">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                <span>+ Registrar Empresa</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Resumen de Métricas de Clientes -->
+                    <div class="clients-stats-overview">
+                        <div class="client-stat-card" onclick="window.clientManager.setFilter('active_client')">
+                            <div class="client-stat-icon active-c">💎</div>
+                            <div class="client-stat-info">
+                                <span class="client-stat-number" id="stat-clients-active">0</span>
+                                <span class="client-stat-label">Clientes Reales (Activos)</span>
+                            </div>
+                        </div>
+                        <div class="client-stat-card" onclick="window.clientManager.setFilter('prospect')">
+                            <div class="client-stat-icon prospect-c">🎯</div>
+                            <div class="client-stat-info">
+                                <span class="client-stat-number" id="stat-clients-prospects">0</span>
+                                <span class="client-stat-label">Prospectos / Leads</span>
+                            </div>
+                        </div>
+                        <div class="client-stat-card" onclick="window.clientManager.setFilter('all')">
+                            <div class="client-stat-icon total-c">🏢</div>
+                            <div class="client-stat-info">
+                                <span class="client-stat-number" id="stat-clients-total">0</span>
+                                <span class="client-stat-label">Total Empresas</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grid de Tarjetas de Clientes / Prospectos -->
+                    <div id="clients-grid-container" class="clients-grid-container"></div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ====================================================
+         MODAL 1: DETALLE DEL POST Y VISOR DE REELS / APROBACIÓN
+         ==================================================== -->
+    <div id="post-detail-modal" class="modal-backdrop">
+        <div class="modal-container" style="max-width: 1040px;">
+            <button class="modal-close-btn" onclick="window.postModal.close()" title="Cerrar modal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            
+            <div class="post-detail-split">
+                <!-- Columna Multimedia Adaptable (Reels, Carruseles, Posts Cuadrados) -->
+                <div class="media-preview-column" id="modal-media-wrapper"></div>
+
+                <!-- Columna de Detalles y Aprobación -->
+                <div class="post-info-column">
+                    <div class="post-header-badges">
+                        <span id="modal-platform-badge" class="platform-badge-floating" style="position: static;">INSTAGRAM</span>
+                        <span id="modal-status-badge" class="status-badge-floating pending" style="position: static;">Pendiente</span>
+                    </div>
+
+                    <h2 id="modal-post-title" class="post-title-lg">Título del Post</h2>
+                    <div id="modal-post-schedule" class="post-meta-details-row"></div>
+
+                    <!-- Observaciones de la Agencia para el Cliente -->
+                    <div id="modal-observation-box" class="modal-observation-box">
+                        <h5 style="display: flex; align-items: center; gap: 6px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+                                <path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"></path>
+                            </svg>
+                            <span>Observación de la Agencia:</span>
+                        </h5>
+                        <p id="modal-obs-content"></p>
+                    </div>
+
+                    <!-- Copy / Caption -->
+                    <div class="post-caption-box">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                            <span class="caption-label" style="margin-bottom: 0;">Pie de Foto / Copy:</span>
+                            <button class="btn-copy-caption" onclick="window.postModal.copyCaption()" style="position: static; display: inline-flex; align-items: center; gap: 4px;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 12px; height: 12px;">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                <span>Copiar</span>
+                            </button>
+                        </div>
+                        <p id="modal-caption-text" class="caption-content-text"></p>
+                        <div id="modal-hashtags-text" style="margin-top: 8px; font-size: 12px; color: var(--accent); font-weight: 600;"></div>
+                    </div>
+
+                    <!-- Panel de Aprobación y Acciones -->
+                    <div class="approval-actions-card">
+                        <div class="approval-status-message">
+                            <span>¿Deseas aprobar este contenido para publicación?</span>
+                        </div>
+
+                        <div class="action-buttons-group">
+                            <button class="btn-modal-approve" onclick="window.postModal.approveCurrentPost()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                <span>Aprobar Publicación</span>
+                            </button>
+                            <button class="btn-modal-reject" onclick="window.postModal.toggleRejectionForm()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                                <span>Solicitar Cambios</span>
+                            </button>
+                        </div>
+
+                        <!-- Formulario de Motivo de Rechazo / Corrección -->
+                        <div id="rejection-form-container" class="rejection-form-container">
+                            <label class="form-group-label" for="rejection-reason-select">Motivo de la Observación:</label>
+                            <select id="rejection-reason-select" class="form-select-field">
+                                <option value="Ajuste en texto / Copy">Ajuste en texto / Copy</option>
+                                <option value="Cambio en video / reel">Cambio en video / Reel</option>
+                                <option value="Diseño no cumple línea gráfica">Diseño no cumple línea gráfica</option>
+                                <option value="Cambio de fecha / horario">Cambio de fecha / horario</option>
+                                <option value="Otro motivo">Otro motivo específico</option>
+                            </select>
+
+                            <label class="form-group-label" for="rejection-notes-textarea">Detalle de los cambios solicitados:</label>
+                            <textarea id="rejection-notes-textarea" class="form-textarea-field" placeholder="Escribe aquí exactamente qué corregir (ej. Cambiar subtítulo en segundo 0:05, usar logo blanco)..."></textarea>
+
+                            <button class="btn-submit-rejection" onclick="window.postModal.submitRejection()">
+                                Enviar Observaciones al Diseñador
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Historial de Observaciones Previas -->
+                    <div id="modal-feedback-history"></div>
+
+                    <!-- Barra de Acciones de la Agencia (Eliminar Post / Video) -->
+                    <div class="modal-admin-actions-bar admin-only-feature">
+                        <button type="button" class="btn-modal-delete-post" onclick="window.postModal.deleteCurrentPost()" title="Eliminar permanentemente este post o video del calendario">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                            <span>Eliminar esta Publicación / Video</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         MODAL 2: CREACIÓN DE NUEVO POST (MODO AGENCIA)
+         ==================================================== -->
+    <div id="create-post-modal" class="modal-backdrop">
+        <div class="modal-container" style="max-width: 680px;">
+            <button class="modal-close-btn" onclick="window.postCreator.close()">✕</button>
+            
+            <div class="creation-modal-body">
+                <h2 style="font-size: 20px; font-weight: 800; color: var(--text-primary);">Programar Nueva Publicación</h2>
+                <p style="font-size: 13px; color: var(--text-secondary); margin-top: -12px;">Agrega un post o video reel para revisión y aprobación de tu cliente.</p>
+
+                <div class="form-grid-2">
+                    <div>
+                        <label class="form-group-label" for="create-post-client-id">Cliente / Marca:</label>
+                        <select id="create-post-client-id" class="form-select-field"></select>
+                    </div>
+                    <div>
+                        <label class="form-group-label" for="create-post-type">Tipo de Contenido:</label>
+                        <select id="create-post-type" class="form-select-field" onchange="window.postCreator.setPostType(this.value)">
+                            <option value="reel">🎬 Video Reel / TikTok (9:16)</option>
+                            <option value="image_post">🖼️ Post Imagen (1:1 / 4:5)</option>
+                            <option value="carousel">📑 Carrusel Multidiseño</option>
+                            <option value="story">📱 Story</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div>
+                        <label class="form-group-label">Plataformas Destino:</label>
+                        <div class="platform-select-group">
+                            <label class="platform-pill-checkbox active">
+                                <input type="checkbox" name="target_platforms" value="instagram" checked>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                                </svg>
+                                <span>Instagram</span>
+                            </label>
+                            <label class="platform-pill-checkbox">
+                                <input type="checkbox" name="target_platforms" value="tiktok">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
+                                </svg>
+                                <span>TikTok</span>
+                            </label>
+                            <label class="platform-pill-checkbox">
+                                <input type="checkbox" name="target_platforms" value="facebook">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                                </svg>
+                                <span>Facebook</span>
+                            </label>
+                            <label class="platform-pill-checkbox">
+                                <input type="checkbox" name="target_platforms" value="linkedin">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                                    <rect x="2" y="9" width="4" height="12"></rect>
+                                    <circle cx="4" cy="4" r="2"></circle>
+                                </svg>
+                                <span>LinkedIn</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-group-label" for="create-post-date">Fecha de Publicación:</label>
+                        <input type="date" id="create-post-date" class="form-input-field">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-group-label" for="create-post-title">Título del Contenido (Interno / Referencia):</label>
+                    <input type="text" id="create-post-title" class="form-input-field" placeholder="Ej. Reel: Presentación de nuevo producto">
+                </div>
+
+                <!-- Selector de Modo de Carga Multimedia: Archivo Local vs Enlace Web -->
+                <div class="media-source-section">
+                    <div class="media-source-header">
+                        <label class="form-group-label" style="margin-bottom: 0;">Multimedia del Contenido / Reel:</label>
+                        <div class="media-source-toggle-pills">
+                            <button type="button" class="source-toggle-pill active" id="btn-source-tab-upload" onclick="window.postCreator.switchSourceTab('upload')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                <span>📁 Subir Archivo</span>
+                            </button>
+                            <button type="button" class="source-toggle-pill" id="btn-source-tab-link" onclick="window.postCreator.switchSourceTab('link')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                                <span>🔗 Link / URL Externa</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Pestaña 1: Carga de Archivos Locales (Arrastrar y Soltar) -->
+                    <div id="media-tab-upload-pane" class="media-tab-pane active">
+                        <div class="file-upload-dropzone" id="file-upload-dropzone">
+                            <input type="file" id="create-post-file-input" accept="video/mp4,video/quicktime,video/webm">
+                            <div class="upload-icon-circle">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                            </div>
+                            <span class="upload-prompt-text" id="upload-prompt-hint">Arrastra tu video Reel aquí o haz clic para seleccionarlo</span>
+                            <span class="upload-sub-text">Soporta videos MP4, MOV, WEBM para Reels y fotos JPG, PNG para posts o carruseles</span>
+                        </div>
+                        <div class="uploaded-files-preview-list" id="uploaded-files-preview-list"></div>
+                    </div>
+
+                    <!-- Pestaña 2: Carga mediante Enlace Web (YouTube, TikTok, Instagram, Drive, Loom, Vimeo, MP4 directos) -->
+                    <div id="media-tab-link-pane" class="media-tab-pane" style="display: none;">
+                        <div class="video-url-input-container">
+                            <div class="video-url-field-row">
+                                <span class="url-input-icon">🔗</span>
+                                <input type="url" id="create-post-video-url-input" class="form-input-field url-field" 
+                                    placeholder="Pega el enlace de YouTube Shorts, TikTok, Instagram Reel, Google Drive, Loom o video MP4..."
+                                    oninput="window.postCreator.handleUrlInput(this.value)">
+                                <button type="button" class="btn-check-url" onclick="window.postCreator.previewUrlLink()">
+                                    <span>Vista Previa</span>
+                                </button>
+                            </div>
+
+                            <!-- Opciones y Detección de Proveedor -->
+                            <div class="url-detected-info-box" id="url-detected-info-box" style="display: none;">
+                                <div class="url-provider-badge" id="url-provider-badge">
+                                    <span>🎬 Video Detectado</span>
+                                </div>
+                                <span class="url-detected-title" id="url-detected-title">Enlace listo para reproducir</span>
+                            </div>
+
+                            <!-- Previsualización en Vivo del Video por Enlace -->
+                            <div class="url-live-preview-box" id="url-live-preview-box" style="display: none;">
+                                <div class="url-preview-frame-wrapper" id="url-preview-frame-wrapper"></div>
+                                <button type="button" class="btn-clear-url" onclick="window.postCreator.clearUrlInput()" title="Borrar enlace">✕ Quitar link</button>
+                            </div>
+
+                            <!-- Portada Personalizada Opcional -->
+                            <div class="custom-thumbnail-row">
+                                <label class="form-group-label" for="create-post-custom-poster" style="font-size: 11px; margin-bottom: 2px;">
+                                    <span>🖼️ Portada / Imagen miniatura (Opcional si deseas personalizarla):</span>
+                                </label>
+                                <input type="url" id="create-post-custom-poster" class="form-input-field" placeholder="https://... URL de imagen JPG/PNG para la portada del post">
+                            </div>
+
+                            <div class="supported-platforms-hint">
+                                <small>💡 <strong>Soporta cualquier página o plataforma:</strong> YouTube (Shorts y videos normales), TikTok, Instagram Reels, Google Drive (videos compartidos), Loom, Vimeo, Dropbox, o cualquier URL directa terminada en .mp4 / .webm.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-group-label" for="create-post-caption">Copy / Pie de Foto para Redes:</label>
+                    <textarea id="create-post-caption" class="form-textarea-field" placeholder="Escribe el texto que se publicará en las redes..."></textarea>
+                </div>
+
+                <div>
+                    <label class="form-group-label" for="create-post-hashtags">Hashtags:</label>
+                    <input type="text" id="create-post-hashtags" class="form-input-field" placeholder="#Marca #Marketing #Viral">
+                </div>
+
+                <div>
+                    <label class="form-group-label" for="create-post-observation">Observación Interna para el Cliente (Opcional):</label>
+                    <input type="text" id="create-post-observation" class="form-input-field" placeholder="Ej. Revisar el audio en segundo 15, sugerimos publicar en fecha acordada...">
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                    <button class="btn-action-view" onclick="window.postCreator.close()">Cancelar</button>
+                    <button class="btn-new-post" style="width: auto; padding: 10px 24px;" onclick="window.postCreator.submitNewPost()">
+                        Guardar en Calendario
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         MODAL 3: GESTIÓN / CREACIÓN / EDICIÓN DE CLIENTE O PROSPECTO
+         ==================================================== -->
+    <div id="client-modal" class="modal-backdrop">
+        <div class="modal-container" style="max-width: 620px;">
+            <button class="modal-close-btn" onclick="window.clientManager.closeModal()">✕</button>
+            
+            <div class="creation-modal-body">
+                <h2 id="client-modal-title" style="font-size: 20px; font-weight: 800; color: var(--text-primary);">Registrar Nueva Empresa / Marca</h2>
+                <p id="client-modal-desc" style="font-size: 13px; color: var(--text-secondary); margin-top: -12px;">Captura los datos de contacto y clasifícalo como Cliente Real o Prospecto.</p>
+
+                <!-- Selector de Sector: Cliente Real vs Prospecto -->
+                <div>
+                    <label class="form-group-label">Sector / Estado de la Empresa (*):</label>
+                    <div class="user-category-selector-cards">
+                        <label class="category-radio-card">
+                            <input type="radio" name="client-modal-type" value="active_client" checked>
+                            <div class="radio-card-content">
+                                <div class="radio-card-icon agency">💎</div>
+                                <div class="radio-card-text">
+                                    <strong>Cliente Real (Activo)</strong>
+                                    <small>Cuenta confirmada con calendario de contenidos y publicaciones activas.</small>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="category-radio-card">
+                            <input type="radio" name="client-modal-type" value="prospect">
+                            <div class="radio-card-content">
+                                <div class="radio-card-icon client">🎯</div>
+                                <div class="radio-card-text">
+                                    <strong>Prospecto / Lead</strong>
+                                    <small>En negociación o propuesta comercial para cierre de contrato.</small>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div>
+                        <label class="form-group-label" for="client-input-name">Nombre de la Empresa / Marca (*):</label>
+                        <input type="text" id="client-input-name" class="form-input-field" placeholder="Ej. Veloz Coffee Roasters" required>
+                    </div>
+                    <div>
+                        <label class="form-group-label" for="client-input-desc">Giro o Rubro Comercial:</label>
+                        <input type="text" id="client-input-desc" class="form-input-field" placeholder="Ej. Cafetería de especialidad">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div>
+                        <label class="form-group-label" for="client-input-phone">Teléfono Principal (*):</label>
+                        <input type="text" id="client-input-phone" class="form-input-field" placeholder="Ej. +52 55 1234 5678">
+                    </div>
+                    <div>
+                        <label class="form-group-label" for="client-input-secondary-phone">Teléfono Secundario / WhatsApp:</label>
+                        <input type="text" id="client-input-secondary-phone" class="form-input-field" placeholder="Ej. +52 55 8765 4321">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div>
+                        <label class="form-group-label" for="client-input-email">Correo Electrónico:</label>
+                        <input type="email" id="client-input-email" class="form-input-field" placeholder="contacto@marca.com">
+                    </div>
+                    <div>
+                        <label class="form-group-label" for="client-input-website">Sitio Web o Redes Sociales:</label>
+                        <input type="text" id="client-input-website" class="form-input-field" placeholder="https://marca.com o @marca">
+                    </div>
+                </div>
+
+                <!-- Metas Acordadas Mensuales (Posts y Reels) con Alerta Automática -->
+                <div class="client-quota-config-box">
+                    <div class="quota-config-header">
+                        <span class="quota-config-icon">🎯</span>
+                        <div>
+                            <strong style="font-size: 13px; color: var(--text-primary); display: block;">Metas Acordadas de Contenido Mensual</strong>
+                            <small style="color: var(--text-secondary); font-size: 11px;">El sistema te alertará automáticamente si faltan posts o reels para cumplir el plan.</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid-2" style="margin-top: 10px;">
+                        <div>
+                            <label class="form-subgroup-label" for="client-input-target-posts">Meta Mensual de Posts / Carruseles:</label>
+                            <input type="number" id="client-input-target-posts" class="form-input-field" placeholder="Ej. 12" min="0" value="0">
+                        </div>
+                        <div>
+                            <label class="form-subgroup-label" for="client-input-target-reels">Meta Mensual de Videos Reels:</label>
+                            <input type="number" id="client-input-target-reels" class="form-input-field" placeholder="Ej. 4" min="0" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-group-label" id="client-notes-label" for="client-input-notes">Notas Comerciales / Acuerdos:</label>
+                    <textarea id="client-input-notes" class="form-textarea-field" style="min-height: 65px;" placeholder="Ej. Plan acordado de 12 posts mensuales, reuniones quincenales..."></textarea>
+                </div>
+
+                <div>
+                    <label class="form-group-label" for="client-input-color">Color Identificador de Marca:</label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="color" id="client-input-color" value="#2563eb" style="width: 44px; height: 38px; border: none; border-radius: 8px; cursor: pointer; background: transparent;">
+                        <small style="color: var(--text-secondary); font-size: 12px;">Se utilizará para el avatar y la personalización visual de la marca.</small>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px;">
+                    <button class="btn-action-view" onclick="window.clientManager.closeModal()">Cancelar</button>
+                    <button class="btn-new-post" id="btn-client-submit-label" style="width: auto; padding: 10px 24px;" onclick="window.clientManager.submitClientForm()">
+                        Guardar y Registrar Empresa
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         MODAL 4: CREACIÓN DE NUEVO USUARIO (MODO AGENCIA / VISTA CLIENTE)
+         ==================================================== -->
+    <div id="create-user-modal" class="modal-backdrop">
+        <div class="modal-container" style="max-width: 580px;">
+            <button class="modal-close-btn" onclick="window.userManager.closeCreateUserModal()">✕</button>
+            
+            <div class="creation-modal-body">
+                <h2 id="user-modal-title" style="font-size: 20px; font-weight: 800; color: var(--text-primary);">Registrar Nuevo Usuario</h2>
+                <p id="user-modal-desc" style="font-size: 13px; color: var(--text-secondary); margin-top: -12px;">Selecciona la categoría y asigna el cliente correspondiente para definir los accesos y aislar los contenidos.</p>
+
+                <!-- Selector de Categoría (2 Categorías Principales) -->
+                <div>
+                    <label class="form-group-label">Tipo de Categoría de Usuario (*):</label>
+                    <div class="user-category-selector-cards">
+                        <label class="category-radio-card">
+                            <input type="radio" name="new-user-category" value="agency" checked>
+                            <div class="radio-card-content">
+                                <div class="radio-card-icon agency">🏢</div>
+                                <div class="radio-card-text">
+                                    <strong>Modo Agencia (Equipo)</strong>
+                                    <small>Equipo interno. Puede tener acceso a todas las marcas o a una marca exclusiva.</small>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="category-radio-card">
+                            <input type="radio" name="new-user-category" value="client">
+                            <div class="radio-card-content">
+                                <div class="radio-card-icon client">👤</div>
+                                <div class="radio-card-text">
+                                    <strong>Vista Cliente (Aprobador)</strong>
+                                    <small>Representante de la marca. Solo ve el portal de su marca asignada.</small>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Selector de Cliente Asignado (Visible y configurable para ambas categorías) -->
+                <div id="user-client-select-group" style="margin-top: 10px; margin-bottom: 6px;">
+                    <label class="form-group-label" for="new-user-client-id">Cliente / Marca Asignada (*):</label>
+                    <select id="new-user-client-id" class="form-select-field"></select>
+                    <small id="user-client-hint" style="display: block; color: var(--text-secondary); font-size: 11.5px; margin-top: 5px; line-height: 1.4;">
+                        🛡️ <strong>Aislamiento de Cuentas:</strong> Si asignas un cliente específico, este usuario únicamente podrá ver las publicaciones y el calendario de esa marca. Los datos de otras marcas no serán visibles.
+                    </small>
+                </div>
+
+                <div class="form-grid-2">
+                    <div>
+                        <label class="form-group-label" for="new-user-name">Nombre Completo (*):</label>
+                        <input type="text" id="new-user-name" class="form-input-field" placeholder="Ej. Ana Lucía Morales" required>
+                    </div>
+                    <div>
+                        <label class="form-group-label" for="new-user-email">Correo Electrónico (*):</label>
+                        <input type="email" id="new-user-email" class="form-input-field" placeholder="ana@agencia.com" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div>
+                        <label class="form-group-label" for="new-user-position">Cargo o Función:</label>
+                        <input type="text" id="new-user-position" class="form-input-field" placeholder="Ej. Content Lead, Diseñadora Senior">
+                    </div>
+                    <div>
+                        <label class="form-group-label" for="new-user-phone">Teléfono / WhatsApp (Opcional):</label>
+                        <input type="text" id="new-user-phone" class="form-input-field" placeholder="+52 55 1234 5678">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-group-label" for="new-user-color">Color de Avatar:</label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="color" id="new-user-color" value="#2563eb" style="width: 44px; height: 38px; border: none; border-radius: 8px; cursor: pointer; background: transparent;">
+                        <small style="color: var(--text-secondary); font-size: 12px;">Se utilizará para personalizar el avatar del usuario.</small>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px;">
+                    <button class="btn-action-view" onclick="window.userManager.closeCreateUserModal()">Cancelar</button>
+                    <button id="btn-submit-user" class="btn-new-post" style="width: auto; padding: 10px 24px;" onclick="window.userManager.submitNewUser()">
+                        Guardar Usuario
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de Notificaciones Flotante -->
+    <div id="global-toast" class="toast-notification"></div>
+
+    <!-- ====================================================
+         SCRIPTS JAVASCRIPT MODULARES (SEPARADOS)
+         ==================================================== -->
+    <!-- Supabase JS Client SDK Oficial -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/supabase-client.js"></script>
+    <script src="assets/js/database-schema.js"></script>
+    <script src="assets/js/auth-roles.js"></script>
+    <script src="assets/js/client-manager.js"></script>
+    <script src="assets/js/user-manager.js"></script>
+    <script src="assets/js/ui-render.js"></script>
+    <script src="assets/js/post-modal.js"></script>
+    <script src="assets/js/post-creator.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
